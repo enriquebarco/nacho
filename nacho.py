@@ -3,6 +3,7 @@ import pyttsx3
 import webbrowser
 import time
 import subprocess
+import threading
 
 from frontend__helpers.popup import show_popup
 from utils.utils import speak, wishMe, runProcess, killProcess, song
@@ -12,12 +13,17 @@ engine=pyttsx3.init()
 r = sr.Recognizer()
 mic = sr.Microphone()
 
+# create a new thread for the popup
+popup_thread = threading.Thread(target=show_popup)
+
+
 def takeCommand(r):
     with mic as source:
         r.adjust_for_ambient_noise(source)
         r.pause_threshold = 0.5
+        print(r.energy_threshold)
         print("Listening...")
-        audio = r.listen(source, timeout=8)
+        audio = r.listen(source)
 
     try:
         statement = r.recognize_google(audio, language='en-in')
@@ -37,6 +43,7 @@ if __name__=='__main__':
         statement = takeCommand(r).lower()
         if statement==0:
             continue
+
         if "goodbye" in statement or "ok bye" in statement or "nacho off" in statement:
             speak ('see you later!')
             break
@@ -44,8 +51,6 @@ if __name__=='__main__':
         elif 'open youtube' in statement:
             webbrowser.open_new_tab("https://youtube.com")
             speak("youtube is now open")
-            time.sleep(3)
-        
             
         elif 'open google' in statement:
             webbrowser.open_new_tab("https://www.google.com")
@@ -61,12 +66,6 @@ if __name__=='__main__':
         elif 'close slack' in statement:
             killProcess('slack')
         
-        elif 'open spotify' in statement:
-            runProcess('spotify')
-
-        elif 'close spotify' in statement:
-            killProcess('spotify')
-        
         elif 'open code' in statement:
             runProcess('code')
 
@@ -79,9 +78,21 @@ if __name__=='__main__':
         elif 'close terminal' in statement:
             killProcess('gnome-terminal')
         
+        elif 'open steam' in statement:
+            runProcess('steam')
+        
+        elif 'close steam' in statement:
+            killProcess('steam')
+        
         # elif 'play ' in statement and 'on spotify' in statement:
         #     song_name = statement.replace('play ', '').replace(' on spotify', '')
         #     play_song(song_name)
+
+        elif 'open spotify' in statement:
+            runProcess('spotify')
+
+        elif 'close spotify' in statement:
+            killProcess('spotify')
         
         elif 'play discover weekly on spotify' in statement:
             # Check if Spotify is running
