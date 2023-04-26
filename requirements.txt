@@ -7,9 +7,13 @@ jaraco.context==4.3.0
 more-itertools==9.1.0
 numpy==1.24.3
 opencv-python==4.7.0.72
+psutil==5.9.5
+PyAudio==0.2.13
 pyttsx3==2.90
 requests==2.28.2
 soupsieve==2.4.1
 SpeechRecognition==3.10.0
 urllib3==1.26.15
+wikipedia==1.4.0
+wolframalpha==5.0.0
 xmltodict==0.13.0
