@@ -1,26 +1,90 @@
+from dotenv import load_dotenv
+from google.cloud import texttospeech_v1
+
 import speech_recognition as sr
-import pyttsx3
+import io
 import datetime
 import subprocess
 import dbus
+import os
+import openai
+import pygame
 
-engine=pyttsx3.init()
+# load enviornmental variables and keys
+load_dotenv()
+openai.api_key = os.getenv("OPEN_AI_KEY")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "google_credentials.json"
+
+# speech recognition
 r = sr.Recognizer()
 mic = sr.Microphone()
 
+# text to speech
+client = texttospeech_v1.TextToSpeechClient()
+voice = texttospeech_v1.VoiceSelectionParams(
+    name="en-GB-Standard-B",
+    language_code="en-GB",
+)
+audio_config = texttospeech_v1.AudioConfig(
+    audio_encoding=texttospeech_v1.AudioEncoding.MP3,
+)
+
 
 def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+    synthesis_input = texttospeech_v1.SynthesisInput(text=text)
+    response = client.synthesize_speech(
+        input=synthesis_input, voice=voice, audio_config=audio_config
+    )
+    # Save the received response to an MP3 file
+    with open("./nacho.mp3", "wb") as out:
+        out.write(response.audio_content)
+    
+    # Play the saved MP3 file after receiving the response and saving it
+    play_audio("./nacho.mp3")
+
+def play_audio(file_path):
+    # Initialize the pygame mixer to handle audio playback
+    pygame.mixer.init()
+    # Load the specified audio file into the mixer
+    pygame.mixer.music.load(file_path)
+    # Start playing the loaded audio file
+    pygame.mixer.music.play()
+    # Keep the program running while the audio is still playing
+    while pygame.mixer.music.get_busy():
+        # Use a clock to keep track of time and control the loop's frequency
+        pygame.time.Clock().tick(10)
+
+def engage_AI_conv(newTakeCommand, r):
+    speak('attempting to engage conversation...')
+    messages = [{"role": "user", "content": "Your name is Nacho, please keep the conversation short and concise. Show me that you understand your role by answering this message saying exactly: Nacho has come out to play, what up with it?"}]
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages= messages)
+    speak(completion.choices[0].message.content)
+    while True:
+        statement = newTakeCommand(r).lower()
+        if statement==0:
+            continue
+        if 'exit conversation' in statement:
+            speak('AI disconnected')
+            break
+        elif statement is not None and statement != 'none' and (statement.strip() != ''):
+            messages.append({"role": "user", "content": statement})
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages= messages)
+            speak(completion.choices[0].message.content)
+            messages.append({"role": "assistant", "content": completion.choices[0].message.content})
+            print(messages)
 
 def wishMe():
     hour=datetime.datetime.now().hour
     if hour>=0 and hour<12:
-         speak("Good Morning!")
+         speak("Good Morning")
     elif hour>=12 and hour<18:
         speak("Good Afternoon...")
     else:
-        speak("Good evening...!")
+        speak("Good evening...")
 
 def runProcess(process):
     subprocess.Popen([process])

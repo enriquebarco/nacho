@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import speech_recognition as sr
 import pyttsx3
 import webbrowser
@@ -6,7 +7,7 @@ import subprocess
 import threading
 
 from frontend__helpers.popup import show_popup
-from utils.utils import speak, wishMe, runProcess, killProcess, song
+from utils.utils import speak, wishMe, runProcess, killProcess, song, engage_AI_conv
 
 
 engine=pyttsx3.init()
@@ -21,7 +22,6 @@ def takeCommand(r):
     with mic as source:
         r.adjust_for_ambient_noise(source)
         r.pause_threshold = 0.5
-        print(r.energy_threshold)
         print("Listening...")
         audio = r.listen(source)
 
@@ -59,6 +59,9 @@ if __name__=='__main__':
         elif 'open gmail' in statement:
             webbrowser.open_new_tab("gmail.com")
             speak("Google Mail is open now")
+
+        elif 'natural are you still there' in statement:
+            speak("For you, always")
         
         elif 'open slack' in statement:
             runProcess('slack')
@@ -115,3 +118,10 @@ if __name__=='__main__':
         
         elif 'play song' in statement:
             song('play')
+        
+        elif 'open web ai' in statement:
+            webbrowser.open_new_tab("https://chat.openai.com/")
+            speak("Chat GPT is now open")
+        
+        elif 'engage in conversation' in statement:
+            engage_AI_conv(takeCommand, r)

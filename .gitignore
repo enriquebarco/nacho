@@ -1,1 +1,5 @@
-nacho_env
+/nacho_env
+google_credentials.json
+nacho.mp3
+.env
+*.pyc
