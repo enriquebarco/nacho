@@ -2,9 +2,7 @@
 import speech_recognition as sr
 import pyttsx3
 import webbrowser
-import time
 import subprocess
-import threading
 
 from frontend__helpers.popup import show_popup
 from utils.utils import speak, wishMe, runProcess, killProcess, song, engage_AI_conv
@@ -13,10 +11,6 @@ from utils.utils import speak, wishMe, runProcess, killProcess, song, engage_AI_
 engine=pyttsx3.init()
 r = sr.Recognizer()
 mic = sr.Microphone()
-
-# create a new thread for the popup
-popup_thread = threading.Thread(target=show_popup)
-
 
 def takeCommand(r):
     with mic as source:
@@ -123,5 +117,5 @@ if __name__=='__main__':
             webbrowser.open_new_tab("https://chat.openai.com/")
             speak("Chat GPT is now open")
         
-        elif 'engage in conversation' in statement:
+        elif 'talk to me' in statement:
             engage_AI_conv(takeCommand, r)

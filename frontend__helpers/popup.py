@@ -3,18 +3,18 @@ import tkinter as tk
 from tkinter import ttk
 import time
 
-def show_popup():
+def show_popup(root, text):
     def on_closing():
         root.destroy()
 
-    def thinking_animation():
-        for frame in thinking_frames:
-            thinking_label.config(image=frame)
-            thinking_label.image = frame
-            root.update()
-            time.sleep(0.1)
+    # def thinking_animation():
+    #     for frame in thinking_frames:
+    #         thinking_label.config(image=frame)
+    #         thinking_label.image = frame
+    #         root.update()
+    #         time.sleep(0.1)
 
-    root = tk.Tk()
+    root.attributes("-topmost", True)
     root.title("Nacho")
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -31,11 +31,8 @@ def show_popup():
     thinking_label = ttk.Label(frame, image=thinking_frames[0])
     thinking_label.grid(row=0, column=0, padx=(0, 20))
 
-    text_label = ttk.Label(frame, text="Nacho is listening...", font=("Arial", 16))
+    text_label = ttk.Label(frame, text=text, font=("Arial", 16))
     text_label.grid(row=0, column=1, padx=(0, 20))
-
-    btn_close = ttk.Button(frame, text="Close", command=root.destroy)
-    btn_close.grid(row=1, column=0, columnspan=2, pady=10)
 
     # Calculate x and y coordinates for the popup window
     x = screen_width - root.winfo_reqwidth() - 10
@@ -44,6 +41,4 @@ def show_popup():
     # Set the geometry of the popup window
     root.geometry("500x{}+{}+{}".format(nacho_gif.height, x, y))
 
-    thinking_animation()
-
-    root.mainloop()
+    root.update()
