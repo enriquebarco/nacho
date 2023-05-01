@@ -2,17 +2,12 @@ from PIL import Image, ImageTk, ImageSequence
 import tkinter as tk
 from tkinter import ttk
 import time
+import threading
+
 
 def show_popup(root, text):
     def on_closing():
-        root.destroy()
-
-    # def thinking_animation():
-    #     for frame in thinking_frames:
-    #         thinking_label.config(image=frame)
-    #         thinking_label.image = frame
-    #         root.update()
-    #         time.sleep(0.1)
+        root.destroy()        
 
     root.attributes("-topmost", True)
     root.title("Nacho")

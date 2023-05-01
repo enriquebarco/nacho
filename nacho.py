@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import speech_recognition as sr
-import pyttsx3
+import tkinter as tk 
 import webbrowser
 import subprocess
 
@@ -8,7 +8,7 @@ from frontend__helpers.popup import show_popup
 from utils.utils import speak, wishMe, runProcess, killProcess, song, engage_AI_conv
 
 
-engine=pyttsx3.init()
+root = tk.Tk()
 r = sr.Recognizer()
 mic = sr.Microphone()
 
@@ -30,6 +30,7 @@ def takeCommand(r):
 
 wishMe()
 speak("Nacho is starting up...")
+show_popup(root,'Nacho is Listening...')
 
 if __name__=='__main__':
 
@@ -40,6 +41,8 @@ if __name__=='__main__':
 
         if "goodbye" in statement or "ok bye" in statement or "nacho off" in statement:
             speak ('see you later!')
+            # kill popup
+            root.destroy()
             break
 
         elif 'open youtube' in statement:
@@ -54,7 +57,7 @@ if __name__=='__main__':
             webbrowser.open_new_tab("gmail.com")
             speak("Google Mail is open now")
 
-        elif 'natural are you still there' in statement:
+        elif 'nacho are you still there' in statement:
             speak("For you, always")
         
         elif 'open slack' in statement:

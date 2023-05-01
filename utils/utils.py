@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from google.cloud import texttospeech_v1
-from frontend__helpers.popup import show_popup
 
 import speech_recognition as sr
 import io
@@ -10,7 +9,6 @@ import dbus
 import os
 import openai
 import pygame
-import tkinter as tk
 
 # load enviornmental variables and keys
 load_dotenv()
@@ -32,10 +30,6 @@ audio_config = texttospeech_v1.AudioConfig(
 )
 
 def speak(text):
-    # call popup and show the text that is being spoken
-    root = tk.Tk()
-    show_popup(root, 'Nacho is thinking...')
-
     # Synthesize the received text into speech
     synthesis_input = texttospeech_v1.SynthesisInput(text=text)
     response = client.synthesize_speech(
@@ -47,9 +41,6 @@ def speak(text):
     
     # Play the saved MP3 file after receiving the response and saving it
     play_audio("./nacho.mp3")
-
-    # kill popup
-    root.destroy()
 
 def play_audio(file_path):
     # Initialize the pygame mixer to handle audio playback
